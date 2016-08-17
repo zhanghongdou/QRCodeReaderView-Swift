@@ -39,7 +39,7 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     var delegate : HandleTheResultDelegate?
     var input : AVCaptureDeviceInput?
     //创建输出流
-    let outPut = AVCaptureMetadataOutput()
+    var outPut : AVCaptureMetadataOutput!
     //扫描的类型
     var scanType : ScanQRCodeType?
     let defaultBothSideWidth : CGFloat = 60
@@ -165,15 +165,20 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         self.captureSession?.sessionPreset = AVCaptureSessionPresetHigh
         //创建输入流
         do {
-            //这里需要在真机运行，否则就会出错
             input = try AVCaptureDeviceInput(device: device)
-            if self.input != nil {
-                self.captureSession?.addInput(self.input)
-            }
+            
         } catch let error as NSError{
             print("AVCaptureDeviceInput(): \(error)")
         }
+        if input != nil {
+            self.captureSession?.addInput(input)
+        }
         
+        outPut = AVCaptureMetadataOutput()
+        
+        if device == nil {
+            return
+        }
         //参数设置
         outPut.setMetadataObjectsDelegate(self, queue: dispatch_get_main_queue())
         self.captureSession?.addOutput(outPut)
@@ -475,4 +480,8 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         }
     }
 
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
 }
