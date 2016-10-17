@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="5Ow-8O-btv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="5Ow-8O-btv">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -14,9 +15,9 @@
                         <viewControllerLayoutGuide type="bottom" id="2KY-TC-U5Y"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8Jj-dW-JLu">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wcj-oe-PZX" sceneMemberID="firstResponder"/>
@@ -32,15 +33,15 @@
                         <viewControllerLayoutGuide type="bottom" id="xKw-0n-6EX"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="v3S-5K-Wfe">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="5bP-T5-f42"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqq-2W-2lW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="856" y="30"/>
+            <point key="canvasLocation" x="1401" y="-83"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yKw-8s-iFI">
@@ -58,7 +59,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pqe-FG-6oz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="239" y="158"/>
+            <point key="canvasLocation" x="748" y="-68"/>
         </scene>
         <!--MineQR Code View Controller-->
         <scene sceneID="aUQ-6W-Gmj">
@@ -69,18 +70,17 @@
                         <viewControllerLayoutGuide type="bottom" id="1eo-ZF-9TL"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="82D-Et-hZT">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="mma-Xy-JRS">
-                                <rect key="frame" x="200" y="200" width="200" height="200"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="ItG-7X-MO0"/>
                                     <constraint firstAttribute="height" constant="200" id="wi2-g9-MKL"/>
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="mma-Xy-JRS" firstAttribute="centerX" secondItem="82D-Et-hZT" secondAttribute="centerX" id="7LA-7K-Pyu"/>
                             <constraint firstItem="mma-Xy-JRS" firstAttribute="centerY" secondItem="82D-Et-hZT" secondAttribute="centerY" id="ewo-1Z-Hce"/>
@@ -103,9 +103,9 @@
                         <viewControllerLayoutGuide type="bottom" id="hSg-jf-v8y"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="FfO-aS-0me">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aap-HH-jfv" userLabel="First Responder" sceneMemberID="firstResponder"/>

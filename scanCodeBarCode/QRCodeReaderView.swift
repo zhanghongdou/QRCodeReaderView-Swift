@@ -12,10 +12,10 @@ import AVFoundation
 typealias putInMyQRCodeController = () -> Void
 //处理扫描结果的delegate
 protocol HandleTheResultDelegate : class {
-    func handelTheResult(metadataObjectString: String) -> Void
+    func handelTheResult(_ metadataObjectString: String) -> Void
 }
 extension HandleTheResultDelegate {
-    func handelTheResult(metadataObjectString: String) -> Void {}
+    func handelTheResult(_ metadataObjectString: String) -> Void {}
 }
 //enum DAOError: ErrorType {
 //    case NoData
@@ -24,12 +24,12 @@ extension HandleTheResultDelegate {
 
 //设置扫描的结构体
 enum ScanQRCodeType: Int {
-    case QRCode = 1
-    case BarCode
+    case qrCode = 1
+    case barCode
 }
 
 class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
-    let device:AVCaptureDevice? = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo);
+    let device:AVCaptureDevice? = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo);
     var puinMyCodeController : putInMyQRCodeController?
     var captureSession : AVCaptureSession?
     var videoPreviewLayer : AVCaptureVideoPreviewLayer?
@@ -66,7 +66,7 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(QRCodeReaderView.creatDrawLine), name: "LAYERANIMATION", object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(QRCodeReaderView.creatDrawLine), name: NSNotification.Name(rawValue: "LAYERANIMATION"), object: nil)
         self.creatDataSource()
         self.setBottomBtnView()
         //条形码扫描的时候添加中间的红线
@@ -74,19 +74,19 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     }
     
     
-    override func drawRect(rect: CGRect) {
-        var scanZoneSize = CGSizeMake(kScreenWidth - self.defaultBothSideWidth * 2, kScreenWidth - self.defaultBothSideWidth * 2)
-        if scanType == .BarCode {
-            scanZoneSize = CGSizeMake(kScreenWidth - self.defaultBothSideWidth * 2, 150)
+    override func draw(_ rect: CGRect) {
+        var scanZoneSize = CGSize(width: kScreenWidth - self.defaultBothSideWidth * 2, height: kScreenWidth - self.defaultBothSideWidth * 2)
+        if scanType == .barCode {
+            scanZoneSize = CGSize(width: kScreenWidth - self.defaultBothSideWidth * 2, height: 150)
         }
         //获取扫描区域的坐标
         let x = self.defaultBothSideWidth
         let y = kScreenHeight / 2 - scanZoneSize.height / 2
-        let scanRect = CGRectMake(x, y, scanZoneSize.width, scanZoneSize.height)
+        let scanRect = CGRect(x: x, y: y, width: scanZoneSize.width, height: scanZoneSize.height)
         self.creatOtherView(scanRect)
         //设置扫描区域
         let rect = self.creatScanZone(scanRect)
-        outPut.rectOfInterest = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
+        outPut.rectOfInterest = CGRect(x: rect.origin.x, y: rect.origin.y, width: rect.size.width, height: rect.size.height)
         
         //设置扫描区域的线框
         self.setScanZoneLineBorder(scanRect)
@@ -99,62 +99,62 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         if self.redLine == nil {
             self.redLine = UIView()
             self.redLine?.center = self.center
-            self.redLine?.bounds = CGRectMake(0, 0, kScreenWidth - 60 * 2 - 20, 1.5)
-            self.redLine?.backgroundColor = UIColor.redColor()
+            self.redLine?.bounds = CGRect(x: 0, y: 0, width: kScreenWidth - 60 * 2 - 20, height: 1.5)
+            self.redLine?.backgroundColor = UIColor.red
             self.addSubview(self.redLine!)
-            self.redLine?.hidden = true
+            self.redLine?.isHidden = true
         }
     }
     
 //MARK: ---设置扫描区域的线框
-    func setScanZoneLineBorder(scanRect : CGRect) {
+    func setScanZoneLineBorder(_ scanRect : CGRect) {
         leftTopLayer.removeFromSuperlayer()
         rightTopLayer.removeFromSuperlayer()
         leftBottomLayer.removeFromSuperlayer()
         rightBottomLayer.removeFromSuperlayer()
         //左上角的框
         let leftTopBezierPath = UIBezierPath()
-        leftTopBezierPath.moveToPoint(CGPointMake(CGRectGetMinX(scanRect) + 15, CGRectGetMinY(scanRect) - 2))
-        leftTopBezierPath.addLineToPoint(CGPointMake(CGRectGetMinX(scanRect) - 2, CGRectGetMinY(scanRect) - 2))
-        leftTopBezierPath.addLineToPoint(CGPointMake(CGRectGetMinX(scanRect) - 2, CGRectGetMinY(scanRect) + 15))
-        leftTopLayer.path = leftTopBezierPath.CGPath
+        leftTopBezierPath.move(to: CGPoint(x: scanRect.minX + 15, y: scanRect.minY - 2))
+        leftTopBezierPath.addLine(to: CGPoint(x: scanRect.minX - 2, y: scanRect.minY - 2))
+        leftTopBezierPath.addLine(to: CGPoint(x: scanRect.minX - 2, y: scanRect.minY + 15))
+        leftTopLayer.path = leftTopBezierPath.cgPath
         leftTopLayer.lineWidth = 4
-        leftTopLayer.strokeColor = UIColor.greenColor().CGColor
-        leftTopLayer.fillColor = UIColor.clearColor().CGColor
+        leftTopLayer.strokeColor = UIColor.green.cgColor
+        leftTopLayer.fillColor = UIColor.clear.cgColor
         self.layer.addSublayer(leftTopLayer)
         
         //右上角的框
         let rightTopBezierPath = UIBezierPath()
-        rightTopBezierPath.moveToPoint(CGPointMake(CGRectGetMaxX(scanRect) - 15, CGRectGetMinY(scanRect) - 2))
-        rightTopBezierPath.addLineToPoint(CGPointMake(CGRectGetMaxX(scanRect) + 2, CGRectGetMinY(scanRect) - 2))
-        rightTopBezierPath.addLineToPoint(CGPointMake(CGRectGetMaxX(scanRect) + 2, CGRectGetMinY(scanRect) + 15))
-        rightTopLayer.path = rightTopBezierPath.CGPath
+        rightTopBezierPath.move(to: CGPoint(x: scanRect.maxX - 15, y: scanRect.minY - 2))
+        rightTopBezierPath.addLine(to: CGPoint(x: scanRect.maxX + 2, y: scanRect.minY - 2))
+        rightTopBezierPath.addLine(to: CGPoint(x: scanRect.maxX + 2, y: scanRect.minY + 15))
+        rightTopLayer.path = rightTopBezierPath.cgPath
         rightTopLayer.lineWidth = 4
-        rightTopLayer.strokeColor = UIColor.greenColor().CGColor
-        rightTopLayer.fillColor = UIColor.clearColor().CGColor
+        rightTopLayer.strokeColor = UIColor.green.cgColor
+        rightTopLayer.fillColor = UIColor.clear.cgColor
         self.layer.addSublayer(rightTopLayer)
         
         //左下角
         let leftBottomBezierPath = UIBezierPath()
-        leftBottomBezierPath.moveToPoint(CGPointMake(CGRectGetMinX(scanRect) + 15, CGRectGetMaxY(scanRect) + 2))
-        leftBottomBezierPath.addLineToPoint(CGPointMake(CGRectGetMinX(scanRect) - 2, CGRectGetMaxY(scanRect) + 2))
-        leftBottomBezierPath.addLineToPoint(CGPointMake(CGRectGetMinX(scanRect) - 2, CGRectGetMaxY(scanRect) - 15))
-        leftBottomLayer.path = leftBottomBezierPath.CGPath
+        leftBottomBezierPath.move(to: CGPoint(x: scanRect.minX + 15, y: scanRect.maxY + 2))
+        leftBottomBezierPath.addLine(to: CGPoint(x: scanRect.minX - 2, y: scanRect.maxY + 2))
+        leftBottomBezierPath.addLine(to: CGPoint(x: scanRect.minX - 2, y: scanRect.maxY - 15))
+        leftBottomLayer.path = leftBottomBezierPath.cgPath
         leftBottomLayer.lineWidth = 4
-        leftBottomLayer.strokeColor = UIColor.greenColor().CGColor
-        leftBottomLayer.fillColor = UIColor.clearColor().CGColor
+        leftBottomLayer.strokeColor = UIColor.green.cgColor
+        leftBottomLayer.fillColor = UIColor.clear.cgColor
         self.layer.addSublayer(leftBottomLayer)
         
         
         //右下角
         let rightBottomBezierPath = UIBezierPath()
-        rightBottomBezierPath.moveToPoint(CGPointMake(CGRectGetMaxX(scanRect) + 2, CGRectGetMaxY(scanRect) - 15))
-        rightBottomBezierPath.addLineToPoint(CGPointMake(CGRectGetMaxX(scanRect) + 2, CGRectGetMaxY(scanRect) + 2))
-        rightBottomBezierPath.addLineToPoint(CGPointMake(CGRectGetMaxX(scanRect) - 15, CGRectGetMaxY(scanRect) + 2))
-        rightBottomLayer.path = rightBottomBezierPath.CGPath
+        rightBottomBezierPath.move(to: CGPoint(x: scanRect.maxX + 2, y: scanRect.maxY - 15))
+        rightBottomBezierPath.addLine(to: CGPoint(x: scanRect.maxX + 2, y: scanRect.maxY + 2))
+        rightBottomBezierPath.addLine(to: CGPoint(x: scanRect.maxX - 15, y: scanRect.maxY + 2))
+        rightBottomLayer.path = rightBottomBezierPath.cgPath
         rightBottomLayer.lineWidth = 4
-        rightBottomLayer.strokeColor = UIColor.greenColor().CGColor
-        rightBottomLayer.fillColor = UIColor.clearColor().CGColor
+        rightBottomLayer.strokeColor = UIColor.green.cgColor
+        rightBottomLayer.fillColor = UIColor.clear.cgColor
         self.layer.addSublayer(rightBottomLayer)
 
     }
@@ -180,7 +180,7 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
             return
         }
         //参数设置
-        outPut.setMetadataObjectsDelegate(self, queue: dispatch_get_main_queue())
+        outPut.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
         self.captureSession?.addOutput(outPut)
         
         //设置元数据类型（二维码和条形码都支持）
@@ -193,13 +193,13 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         //layer进行裁剪
         self.videoPreviewLayer?.videoGravity = AVLayerVideoGravityResizeAspectFill
         self.videoPreviewLayer?.frame = self.layer.bounds
-        self.layer.insertSublayer(self.videoPreviewLayer!, atIndex: 0)
+        self.layer.insertSublayer(self.videoPreviewLayer!, at: 0)
         
         //设置聚焦(不是说所有的设备都支持，所以需要判断)
-        if device!.focusPointOfInterestSupported && device!.isFocusModeSupported(AVCaptureFocusMode.ContinuousAutoFocus) {
+        if device!.isFocusPointOfInterestSupported && device!.isFocusModeSupported(AVCaptureFocusMode.continuousAutoFocus) {
             do {
                 try self.input?.device.lockForConfiguration()
-                self.input?.device.focusMode = AVCaptureFocusMode.ContinuousAutoFocus
+                self.input?.device.focusMode = AVCaptureFocusMode.continuousAutoFocus
                 self.input?.device.unlockForConfiguration()
             }catch let error as NSError {
                 print("device.lockForConfiguration(): \(error)")
@@ -209,33 +209,33 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     }
     
 //MARK: ---设置扫描区域的边框
-    func setScanZoneBorder(imageViewScan imageViewScan : UIImageView) {
-        let leftTopImageView = UIImageView.init(frame: CGRectMake(0, 0, 20, 20))
+    func setScanZoneBorder(imageViewScan : UIImageView) {
+        let leftTopImageView = UIImageView.init(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         leftTopImageView.image = UIImage(named: "ScanQR1_16x16_")
-        leftTopImageView.backgroundColor = UIColor.clearColor()
+        leftTopImageView.backgroundColor = UIColor.clear
         imageViewScan.addSubview(leftTopImageView)
         
-        let rightopImageView = UIImageView.init(frame: CGRectMake(imageViewScan.frame.width - 20, 0, 20, 20))
+        let rightopImageView = UIImageView.init(frame: CGRect(x: imageViewScan.frame.width - 20, y: 0, width: 20, height: 20))
         rightopImageView.image = UIImage(named: "ScanQR2_16x16_")
-        rightopImageView.backgroundColor = UIColor.clearColor()
+        rightopImageView.backgroundColor = UIColor.clear
         imageViewScan.addSubview(rightopImageView)
         
         
-        let righBottomImageView = UIImageView.init(frame: CGRectMake(imageViewScan.frame.width - 20, imageViewScan.frame.height - 20, 20, 20))
+        let righBottomImageView = UIImageView.init(frame: CGRect(x: imageViewScan.frame.width - 20, y: imageViewScan.frame.height - 20, width: 20, height: 20))
         righBottomImageView.image = UIImage(named: "ScanQR4_16x16_")
-        righBottomImageView.backgroundColor = UIColor.clearColor()
+        righBottomImageView.backgroundColor = UIColor.clear
         imageViewScan.addSubview(righBottomImageView)
         
-        let leftBottomImageView = UIImageView.init(frame: CGRectMake(0, imageViewScan.frame.height - 20, 20, 20))
+        let leftBottomImageView = UIImageView.init(frame: CGRect(x: 0, y: imageViewScan.frame.height - 20, width: 20, height: 20))
         leftBottomImageView.image = UIImage(named: "ScanQR3_16x16_")
-        leftBottomImageView.backgroundColor = UIColor.clearColor()
+        leftBottomImageView.backgroundColor = UIColor.clear
         imageViewScan.addSubview(leftBottomImageView)
     }
     
 //MARK: ---扫描线
     func creatDrawLine() {
         
-        let rect = CGRectMake(60 + 10, (kScreenHeight - (kScreenWidth - 60 * 2)) / 2, kScreenWidth - 60 * 2 - 20, 2)
+        let rect = CGRect(x: 60 + 10, y: (kScreenHeight - (kScreenWidth - 60 * 2)) / 2, width: kScreenWidth - 60 * 2 - 20, height: 2)
         if self.lineImageView == nil {
         self.lineImageView = UIImageView.init(frame: rect)
         self.lineImageView?.image = UIImage(named: "line-1")
@@ -243,17 +243,17 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         }
         
         let transitionAnimation = CABasicAnimation.init(keyPath: "position")
-        transitionAnimation.fromValue = NSValue.init(CGPoint: CGPointMake(60 + (kScreenWidth - 60 * 2) / 2, (kScreenHeight - (kScreenWidth - 60 * 2)) / 2))
-        transitionAnimation.toValue = NSValue.init(CGPoint: CGPointMake( 60 + (kScreenWidth - 60 * 2) / 2, kScreenHeight / 2 + (kScreenWidth - 60 * 2) / 2))
+        transitionAnimation.fromValue = NSValue.init(cgPoint: CGPoint(x: 60 + (kScreenWidth - 60 * 2) / 2, y: (kScreenHeight - (kScreenWidth - 60 * 2)) / 2))
+        transitionAnimation.toValue = NSValue.init(cgPoint: CGPoint( x: 60 + (kScreenWidth - 60 * 2) / 2, y: kScreenHeight / 2 + (kScreenWidth - 60 * 2) / 2))
         transitionAnimation.duration = 1.8
         transitionAnimation.repeatCount = 999
         transitionAnimation.autoreverses = true
-        self.lineImageView?.layer.addAnimation(transitionAnimation, forKey: "transitionAnimation")
+        self.lineImageView?.layer.add(transitionAnimation, forKey: "transitionAnimation")
     }
 
 //MARK: ---暂停动画的方法
     func stopLineAnimation() {
-        let pauseTime = self.lineImageView?.layer.convertTime(CACurrentMediaTime(), fromLayer: nil)
+        let pauseTime = self.lineImageView?.layer.convertTime(CACurrentMediaTime(), from: nil)
         self.lineImageView?.layer.speed = 0
         self.lineImageView?.layer.timeOffset = pauseTime!
     }
@@ -263,12 +263,12 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         self.lineImageView?.layer.speed = 1
         self.lineImageView?.layer.beginTime = 0
         self.lineImageView?.layer.timeOffset = 0
-        let timeSincePause = (self.lineImageView?.layer.convertTime(CACurrentMediaTime(), fromLayer: nil))! - pauseTime!
+        let timeSincePause = (self.lineImageView?.layer.convertTime(CACurrentMediaTime(), from: nil))! - pauseTime!
         self.lineImageView?.layer.beginTime = timeSincePause
 
     }
     
-    func creatOtherView(scanRect : CGRect) {
+    func creatOtherView(_ scanRect : CGRect) {
         let allAlpha : CGFloat = 0.5
 
         //最上部的View
@@ -276,9 +276,9 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
             topView?.removeFromSuperview()
             topView = nil
         }
-        topView = UIView.init(frame: CGRectMake(0, 0, kScreenWidth, scanRect.origin.y))
+        topView = UIView.init(frame: CGRect(x: 0, y: 0, width: kScreenWidth, height: scanRect.origin.y))
         topView!.alpha = allAlpha
-        topView!.backgroundColor = UIColor.blackColor()
+        topView!.backgroundColor = UIColor.black
         self.addSubview(topView!)
         
         //左侧的View
@@ -286,8 +286,8 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
             leftView?.removeFromSuperview()
             leftView = nil
         }
-        leftView = UIView.init(frame: CGRectMake(0, scanRect.origin.y, self.defaultBothSideWidth, scanRect.size.height))
-        leftView!.backgroundColor = UIColor.blackColor()
+        leftView = UIView.init(frame: CGRect(x: 0, y: scanRect.origin.y, width: self.defaultBothSideWidth, height: scanRect.size.height))
+        leftView!.backgroundColor = UIColor.black
         leftView!.alpha = allAlpha
         self.addSubview(leftView!)
         
@@ -297,8 +297,8 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
             rightView?.removeFromSuperview()
             rightView = nil
         }
-        rightView = UIView.init(frame: CGRectMake(CGRectGetMaxX(scanRect), scanRect.origin.y, self.defaultBothSideWidth, scanRect.size.height))
-        rightView!.backgroundColor = UIColor.blackColor()
+        rightView = UIView.init(frame: CGRect(x: scanRect.maxX, y: scanRect.origin.y, width: self.defaultBothSideWidth, height: scanRect.size.height))
+        rightView!.backgroundColor = UIColor.black
         rightView!.alpha = allAlpha
         self.addSubview(rightView!)
         
@@ -308,40 +308,40 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
             bottomView?.removeFromSuperview()
             bottomView = nil
         }
-        bottomView = UIView.init(frame: CGRectMake(0,CGRectGetMaxY(scanRect), kScreenWidth, kScreenHeight - CGRectGetMaxY(scanRect) - 100))
-        bottomView!.backgroundColor = UIColor.blackColor()
+        bottomView = UIView.init(frame: CGRect(x: 0,y: scanRect.maxY, width: kScreenWidth, height: kScreenHeight - scanRect.maxY - 100))
+        bottomView!.backgroundColor = UIColor.black
         bottomView!.alpha = allAlpha
         self.addSubview(bottomView!)
         
-        let detailLabel = UILabel.init(frame: CGRectMake(0, 10, kScreenWidth, 20))
-        detailLabel.backgroundColor = UIColor.clearColor()
-        detailLabel.textColor = UIColor.whiteColor()
-        if self.scanType == .BarCode {
+        let detailLabel = UILabel.init(frame: CGRect(x: 0, y: 10, width: kScreenWidth, height: 20))
+        detailLabel.backgroundColor = UIColor.clear
+        detailLabel.textColor = UIColor.white
+        if self.scanType == .barCode {
             detailLabel.text = "将条形码放入框内，即可自动扫描"
         }else{
             detailLabel.text = "将二维码放入框内，即可自动扫描"
         }
         
         
-        detailLabel.font = UIFont.systemFontOfSize(16)
-        detailLabel.textAlignment = .Center
+        detailLabel.font = UIFont.systemFont(ofSize: 16)
+        detailLabel.textAlignment = .center
         bottomView!.addSubview(detailLabel)
         
         //我的二维码
-        let mineBtn = UIButton.init(frame: CGRectMake((kScreenWidth - 150) / 2, 40, 150, 40))
-        mineBtn.titleLabel?.font = UIFont.systemFontOfSize(16)
-        mineBtn.setTitle("我的二维码", forState: .Normal)
-        mineBtn.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        mineBtn.setImage(UIImage.init(named: "erweima_1"), forState: .Normal)
+        let mineBtn = UIButton.init(frame: CGRect(x: (kScreenWidth - 150) / 2, y: 40, width: 150, height: 40))
+        mineBtn.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        mineBtn.setTitle("我的二维码", for: UIControlState())
+        mineBtn.setTitleColor(UIColor.white, for: UIControlState())
+        mineBtn.setImage(UIImage.init(named: "erweima_1"), for: UIControlState())
         mineBtn.layer.cornerRadius = 20
-        mineBtn.backgroundColor = UIColor.blackColor()
-        mineBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.Left, space: 10)
-        mineBtn.addTarget(self, action: #selector(QRCodeReaderView.pushInMineQRCode), forControlEvents: .TouchUpInside)
+        mineBtn.backgroundColor = UIColor.black
+        mineBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.left, space: 10)
+        mineBtn.addTarget(self, action: #selector(QRCodeReaderView.pushInMineQRCode), for: .touchUpInside)
         bottomView!.addSubview(mineBtn)
-        if self.scanType == .BarCode {
-            mineBtn.hidden = true
+        if self.scanType == .barCode {
+            mineBtn.isHidden = true
         }else{
-            mineBtn.hidden = false
+            mineBtn.isHidden = false
         }
     }
 
@@ -350,56 +350,56 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     func setBottomBtnView() {
         //设置底部的按钮View
         let btnBottomViewHeight : CGFloat = 100
-        btnBottomView = UIView.init(frame: CGRectMake(0, kScreenHeight - btnBottomViewHeight, kScreenWidth, btnBottomViewHeight))
-        btnBottomView.backgroundColor = UIColor.blackColor()
+        btnBottomView = UIView.init(frame: CGRect(x: 0, y: kScreenHeight - btnBottomViewHeight, width: kScreenWidth, height: btnBottomViewHeight))
+        btnBottomView.backgroundColor = UIColor.black
         btnBottomView.alpha = 0.8
         self.addSubview(btnBottomView)
-        self.bringSubviewToFront(btnBottomView)
+        self.bringSubview(toFront: btnBottomView)
         
         //二维码
         let width = kScreenWidth / 3
-        leftQRCodeBtn = UIButton.init(frame: CGRectMake(0, 0, width, btnBottomViewHeight))
-        leftQRCodeBtn.setImage(UIImage(named: "qrcode_scan_btn_myqrcode_down"), forState: .Selected)
-        leftQRCodeBtn.setImage(UIImage(named: "qrcode_scan_btn_myqrcode_nor"), forState: .Normal)
-        leftQRCodeBtn.setTitle("二维码", forState: .Normal)
-        leftQRCodeBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.Top, space: 10)
-        leftQRCodeBtn.titleLabel?.font = UIFont.systemFontOfSize(14)
-        leftQRCodeBtn.addTarget(self, action: #selector(QRCodeReaderView.scanQRCode(_:)), forControlEvents: .TouchUpInside)
+        leftQRCodeBtn = UIButton.init(frame: CGRect(x: 0, y: 0, width: width, height: btnBottomViewHeight))
+        leftQRCodeBtn.setImage(UIImage(named: "qrcode_scan_btn_myqrcode_down"), for: .selected)
+        leftQRCodeBtn.setImage(UIImage(named: "qrcode_scan_btn_myqrcode_nor"), for: UIControlState())
+        leftQRCodeBtn.setTitle("二维码", for: UIControlState())
+        leftQRCodeBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.top, space: 10)
+        leftQRCodeBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        leftQRCodeBtn.addTarget(self, action: #selector(QRCodeReaderView.scanQRCode(_:)), for: .touchUpInside)
         btnBottomView.addSubview(leftQRCodeBtn)
-        leftQRCodeBtn.selected = true
+        leftQRCodeBtn.isSelected = true
         //开灯
-        let lightBtn = UIButton.init(frame: CGRectMake(width, 0, width, btnBottomViewHeight))
-        lightBtn.setImage(UIImage(named: "qrcode_scan_btn_flash_on"), forState: .Selected)
-        lightBtn.setImage(UIImage(named: "qrcode_scan_btn_flash_off"), forState: .Normal)
-        lightBtn.setTitle("开灯", forState: .Normal)
-        lightBtn.setTitle("关灯", forState: .Selected)
-        lightBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.Top, space: 10)
-        lightBtn.titleLabel?.font = UIFont.systemFontOfSize(14)
-        lightBtn.addTarget(self, action: #selector(QRCodeReaderView.turnOnOrOffWigthLight(_:)), forControlEvents: .TouchUpInside)
+        let lightBtn = UIButton.init(frame: CGRect(x: width, y: 0, width: width, height: btnBottomViewHeight))
+        lightBtn.setImage(UIImage(named: "qrcode_scan_btn_flash_on"), for: .selected)
+        lightBtn.setImage(UIImage(named: "qrcode_scan_btn_flash_off"), for: UIControlState())
+        lightBtn.setTitle("开灯", for: UIControlState())
+        lightBtn.setTitle("关灯", for: .selected)
+        lightBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.top, space: 10)
+        lightBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        lightBtn.addTarget(self, action: #selector(QRCodeReaderView.turnOnOrOffWigthLight(_:)), for: .touchUpInside)
         btnBottomView.addSubview(lightBtn)
         
         //条形码
-        barCodeBtn = UIButton.init(frame: CGRectMake(width * 2, 0, width, btnBottomViewHeight))
-        barCodeBtn.setImage(UIImage(named: "barcodeScan0"), forState: .Selected)
-        barCodeBtn.setImage(UIImage(named: "barcodeScan1"), forState: .Normal)
-        barCodeBtn.setTitle("条形码", forState: .Normal)
-        barCodeBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.Top, space: 10)
-        barCodeBtn.addTarget(self, action: #selector(QRCodeReaderView.scanBarCode(_:)), forControlEvents: .TouchUpInside)
-        barCodeBtn.titleLabel?.font = UIFont.systemFontOfSize(14)
+        barCodeBtn = UIButton.init(frame: CGRect(x: width * 2, y: 0, width: width, height: btnBottomViewHeight))
+        barCodeBtn.setImage(UIImage(named: "barcodeScan0"), for: .selected)
+        barCodeBtn.setImage(UIImage(named: "barcodeScan1"), for: UIControlState())
+        barCodeBtn.setTitle("条形码", for: UIControlState())
+        barCodeBtn.layoutButtonWithEdgesInsetsStyleWithSpace(.top, space: 10)
+        barCodeBtn.addTarget(self, action: #selector(QRCodeReaderView.scanBarCode(_:)), for: .touchUpInside)
+        barCodeBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
         btnBottomView.addSubview(barCodeBtn)
     }
     
 //MARK: ---点击开灯按钮的事件
-    func turnOnOrOffWigthLight(sender : UIButton) {
-        sender.selected = sender.selected ? false : true
-        self.theLightIsON(sender.selected)
+    func turnOnOrOffWigthLight(_ sender : UIButton) {
+        sender.isSelected = sender.isSelected ? false : true
+        self.theLightIsON(sender.isSelected)
     }
 //MARK: ---开灯或者关灯
-    func theLightIsON(turnLight : Bool){
+    func theLightIsON(_ turnLight : Bool){
         if device != nil && device!.hasTorch {
             do{
                 try input?.device.lockForConfiguration()
-                input?.device.torchMode = turnLight ? AVCaptureTorchMode.On : AVCaptureTorchMode.Off
+                input?.device.torchMode = turnLight ? AVCaptureTorchMode.on : AVCaptureTorchMode.off
                 input?.device.unlockForConfiguration()
             }catch let error as NSError {
                 print("device.lockForConfiguration(): \(error)")
@@ -408,29 +408,29 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     }
     
 //MARK: ---扫描二维码
-    func scanQRCode(sender : UIButton) {
-        if sender.selected {
+    func scanQRCode(_ sender : UIButton) {
+        if sender.isSelected {
             return
         }
-        leftQRCodeBtn.selected = true
-        barCodeBtn.selected = false
-        self.scanType = .QRCode
+        leftQRCodeBtn.isSelected = true
+        barCodeBtn.isSelected = false
+        self.scanType = .qrCode
         self.setNeedsDisplay()
-        self.lineImageView?.hidden = false
-        self.redLine?.hidden = true
+        self.lineImageView?.isHidden = false
+        self.redLine?.isHidden = true
     }
     
 //MARK: ---扫描条形码
-    func scanBarCode(sender : UIButton) {
-        if sender.selected {
+    func scanBarCode(_ sender : UIButton) {
+        if sender.isSelected {
             return
         }
-        leftQRCodeBtn.selected = false
-        barCodeBtn.selected = true
-        self.scanType = .BarCode
+        leftQRCodeBtn.isSelected = false
+        barCodeBtn.isSelected = true
+        self.scanType = .barCode
         self.setNeedsDisplay()
-        self.lineImageView?.hidden = true
-        self.redLine?.hidden = false
+        self.lineImageView?.isHidden = true
+        self.redLine?.isHidden = false
     }
     
 //MARK: ---进入我的二维码试图控制器
@@ -440,21 +440,29 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         }
     }
 //MARK: ---创建扫描区域
-    func creatScanZone(rect: CGRect) -> CGRect {
+    func creatScanZone(_ rect: CGRect) -> CGRect {
         var x = CGFloat()
         var y = CGFloat()
         var width = CGFloat()
         var height = CGFloat()
-        x = (CGRectGetHeight(self.frame) - CGRectGetHeight(rect)) / 2 / CGRectGetHeight(self.frame)
-        y = (CGRectGetWidth(self.frame) - CGRectGetWidth(rect)) / 2 / CGRectGetWidth(self.frame)
-        width = CGRectGetHeight(rect) / CGRectGetHeight(self.frame)
-        height = CGRectGetWidth(rect) / CGRectGetWidth(self.frame)
-        return CGRectMake(x, y, width, height)
+        x = (self.frame.height - rect.height) / 2 / self.frame.height
+        y = (self.frame.width - rect.width) / 2 / self.frame.width
+        width = rect.height / self.frame.height
+        height = rect.width / self.frame.width
+        return CGRect(x: x, y: y, width: width, height: height)
     }
     
 //MARK: ---开始扫描
     func start() {
-        self.captureSession?.startRunning()
+        if Platform.isSimulator {
+            // Do one thing
+            print("Please use real machine operation, no this function  of simulator")
+        }
+        else {
+            // Do the other
+            self.captureSession?.startRunning()
+        }
+        
     }
     
 //MARK: ---停止
@@ -466,8 +474,8 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         fatalError("init(coder:) has not been implemented")
     }
 //MARK: ---得到扫描结果
-    func captureOutput(captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection connection: AVCaptureConnection!) {
-        if self.scanType != .BarCode {
+    func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
+        if self.scanType != .barCode {
             self.stopLineAnimation()
         }
         if metadataObjects.count > 0 {
@@ -481,7 +489,7 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
     }
 
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
 }

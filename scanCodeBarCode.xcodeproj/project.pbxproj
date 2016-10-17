@@ -131,6 +131,7 @@
 					049165001D62B8DA0057F423 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = E72K3Q86M5;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -293,11 +294,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = E72K3Q86M5;
 				INFOPLIST_FILE = scanCodeBarCode/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.scanCodeBarCode;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.scanCodeBarCode789;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -306,11 +309,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = E72K3Q86M5;
 				INFOPLIST_FILE = scanCodeBarCode/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.scanCodeBarCode;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lsf.scanCodeBarCode789;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
