@@ -59,7 +59,7 @@ class QRCodeViewController: UIViewController , UIAlertViewDelegate, HandleTheRes
                     let featureTmp:CIQRCodeFeature = feature as! CIQRCodeFeature
                     
                     let scanResult = featureTmp.messageString
-                    print("这是扫苗的结果\(scanResult)")
+                    self.handleResult(scanResult!)
                 }
             }
             
