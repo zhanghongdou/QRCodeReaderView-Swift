@@ -418,6 +418,8 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         self.setNeedsDisplay()
         self.lineImageView?.isHidden = false
         self.redLine?.isHidden = true
+        self.start()
+        self.startLineAnimation()
     }
     
 //MARK: ---扫描条形码
@@ -431,6 +433,7 @@ class QRCodeReaderView: UIView, AVCaptureMetadataOutputObjectsDelegate{
         self.setNeedsDisplay()
         self.lineImageView?.isHidden = true
         self.redLine?.isHidden = false
+        self.start()
     }
     
 //MARK: ---进入我的二维码试图控制器

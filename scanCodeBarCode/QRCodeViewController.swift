@@ -14,7 +14,7 @@ import AudioToolbox
 class QRCodeViewController: UIViewController , UIAlertViewDelegate, HandleTheResultDelegate, UIImagePickerControllerDelegate,UINavigationControllerDelegate{
     
     var readView : QRCodeReaderView?
-    var alertView : UIAlertView?
+    var alertView : UIAlertController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,19 +71,23 @@ class QRCodeViewController: UIViewController , UIAlertViewDelegate, HandleTheRes
     func initScan() {
         let authorStaus = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         if [authorStaus == .restricted, authorStaus == .denied].contains(true){
-            if kIOS8 == 1 {
                 if self.alertView != nil {
                     self.alertView = nil
                 }
-                self.alertView = UIAlertView.init(title: "温馨提示", message: "相机权限受限，请在设置->隐私->相机 中进行设置！", delegate: self, cancelButtonTitle: "取消", otherButtonTitles: "设置")
-                self.alertView?.show()
-            }else{
-                if self.alertView != nil {
-                    self.alertView = nil
-                    self.alertView = UIAlertView.init(title: "温馨提示", message: "相机权限受限，请在设置->隐私->相机 中进行设置！", delegate: self, cancelButtonTitle: "取消", otherButtonTitles: "设置")
-                    self.alertView?.show()
-                }
-            }
+                self.alertView = UIAlertController.init(title: "温馨提示", message: "相机权限受限，请在设置->隐私->相机 中进行设置！", preferredStyle: .alert)
+                let cancelAction = UIAlertAction.init(title: "取消", style: .cancel, handler: { (cancelaction) in
+                    
+                })
+                let setAction = UIAlertAction.init(title: "去设置", style: .default, handler: { (setaction) in
+                    let url = NSURL.init(string: UIApplicationOpenSettingsURLString)
+                    if UIApplication.shared.canOpenURL(url as! URL) {
+                        UIApplication.shared.openURL(url as! URL)
+                    }
+                })
+            self.alertView?.addAction(cancelAction)
+            self.alertView?.addAction(setAction)
+            self.present(self.alertView!, animated: true, completion: nil)
+            return
         }
         
         if self.readView != nil{
